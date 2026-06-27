@@ -1,0 +1,12 @@
+# use the following commands to deploy template
+# use the same for updates too. sam detects changes set and updates only necessary changes
+
+sam build
+sam deploy --guided 
+
+
+# note: sam deploy can  also be used with optional values instead of using guided
+
+# use for delete
+
+sam delete --stack-name my-stack

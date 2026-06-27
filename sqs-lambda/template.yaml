@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  MyDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: my-dlq
+
+  MyQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: my-demo-queue
+      VisibilityTimeout: 30
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt MyDLQ.Arn
+        maxReceiveCount: 3
+
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: my-sqs-consumer
+      Runtime: nodejs22.x
+      Handler: handler.handler
+      CodeUri: ./
+      Timeout: 30
+
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt MyQueue.Arn
+            BatchSize: 10
+            FunctionResponseTypes:
+              - ReportBatchItemFailures
+            Enabled: true
+
+Outputs:
+  QueueUrl:
+    Value: !Ref MyQueue
+
+  QueueArn:
+    Value: !GetAtt MyQueue.Arn
+
+  FunctionName:
+    Value: !Ref MyFunction
