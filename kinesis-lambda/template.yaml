@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+
+  ####################################
+  # Kinesis Stream
+  ####################################
+  OrdersStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      Name: orders-stream
+      ShardCount: 2
+
+  ####################################
+  # Lambda Function
+  ####################################
+  ProcessOrdersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: process-orders
+
+      Runtime: nodejs22.x
+      Handler: lambda-consumer.handler
+      CodeUri: .
+
+      Timeout: 30
+      MemorySize: 512
+
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+      Events:
+        OrdersKinesisEvent:
+          Type: Kinesis
+          Properties:
+            Stream: !GetAtt OrdersStream.Arn
+
+            StartingPosition: LATEST
+
+            # Maximum records per invocation
+            BatchSize: 100
+
+            # Wait up to 5 seconds to build a batch
+            MaximumBatchingWindowInSeconds: 5
+
+            # Up to 2 concurrent batches per shard
+            ParallelizationFactor: 2
+
+            # Retry failed batches 3 times
+            MaximumRetryAttempts: 3
+
+            # Split failed batches automatically
+            BisectBatchOnFunctionError: true
+
+            # Ignore records older than 2 hours
+            MaximumRecordAgeInSeconds: 7200
+
+            Enabled: true
+
+Outputs:
+  StreamArn:
+    Value: !GetAtt OrdersStream.Arn
