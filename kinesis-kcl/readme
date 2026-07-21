@@ -1,0 +1,22 @@
+
+Kcl requires both kinesis and dynamo permissions. It creates dynamo table to store checkpoint and shard information. The dynamo table and other details are add in properties file.
+
+The policy required by kcl is provided in ec2-kcl-policy.json file. This policy should be attached to the ec2 instance role.
+
+
+Running:
+
+It needs java because kcl uses java internaly.
+For Amazon Linux 2023: sudo dnf install java-17-amazon-corretto -y 
+
+In the node app folder run:
+node ./node_modules/aws-kcl/bin/kcl-bootstrap \
+    --java $(which java) \
+    -e \
+    -p properties
+
+
+Kcl needs MultiLanguageDemon written in java to work. The kcl-bootstrap in aws-kcl in node_modules contains the MultiLanguageDemon. 
+
+In the run command, the properties file has the node command which java executes automatically
+executableName=node kcl-consumer.js

@@ -1,4 +1,4 @@
-// producer is node code run in ec2 to better understand kinesis
+// producer is node code run in ec2 or local
 
 const { KinesisClient, PutRecordCommand } = require("@aws-sdk/client-kinesis");
 

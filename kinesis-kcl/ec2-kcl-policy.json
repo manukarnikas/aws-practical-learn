@@ -1,0 +1,75 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "KinesisRead",
+      "Effect": "Allow",
+      "Action": [
+        "kinesis:DescribeStream",
+        "kinesis:DescribeStreamSummary",
+        "kinesis:RegisterStreamConsumer",
+        "kinesis:GetRecords",
+        "kinesis:GetShardIterator",
+        "kinesis:ListShards"
+      ],
+      "Resource": "arn:aws:kinesis:ap-south-1:ACCOUNT_ID:stream/orders-stream"
+    },
+    {
+      "Sid": "EnhancedFanOut",
+      "Effect": "Allow",
+      "Action": [
+        "kinesis:SubscribeToShard",
+        "kinesis:DescribeStreamConsumer"
+      ],
+      "Resource": "arn:aws:kinesis:ap-south-1:ACCOUNT_ID:stream/orders-stream/consumer/*"
+    },
+    {
+      "Sid": "KCLLeaseTable",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:CreateTable",
+        "dynamodb:DescribeTable",
+        "dynamodb:UpdateTable",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Scan"
+      ],
+      "Resource": "arn:aws:dynamodb:ap-south-1:ACCOUNT_ID:table/my-kcl-app"
+    },
+    {
+      "Sid": "KCLMetadataTables",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:CreateTable",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Scan"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-south-1:ACCOUNT_ID:table/my-kcl-app-WorkerMetricStats",
+        "arn:aws:dynamodb:ap-south-1:ACCOUNT_ID:table/my-kcl-app-CoordinatorState"
+      ]
+    },
+    {
+      "Sid": "KCLLeaseIndex",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:Query"
+      ],
+      "Resource": "arn:aws:dynamodb:ap-south-1:ACCOUNT_ID:table/my-kcl-app/index/*"
+    },
+    {
+      "Sid": "CloudWatchMetrics",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:PutMetricData"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

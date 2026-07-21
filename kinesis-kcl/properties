@@ -1,0 +1,7 @@
+executableName=node kcl-consumer.js
+streamName=orders-stream
+applicationName=my-kcl-app
+AwsCredentialsProvider=DefaultCredentialsProvider
+processingLanguage=node
+region=ap-south-1
+initialPositionInStream=TRIM_HORIZON
